@@ -97,4 +97,15 @@ class GithubIntegrationIssue(BaseIntegrationIssue):
 
     def get_projects(self):
         repos = self.__client.get("/user/repos")
+        
+        # Fetch organization repositories
+        try:
+            orgs = self.__client.get("/user/orgs")
+            for org in orgs:
+                org_repos = self.__client.get(f"/orgs/{org['login']}/repos")
+                repos.extend(org_repos)
+        except Exception as e:
+            # If fetching org repos fails, just continue with user repos
+            pass
+        
         return [formatter.repo(r) for r in repos]
