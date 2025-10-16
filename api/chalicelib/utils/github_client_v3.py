@@ -78,7 +78,7 @@ class github_formatters:
             return None
         return {
             "id": str(repo["id"]),
-            "name": repo["name"],
+            "name": repo.get("full_name", repo["name"]),
             "description": repo["description"],
             "creator": str(repo["owner"]["id"])
         }

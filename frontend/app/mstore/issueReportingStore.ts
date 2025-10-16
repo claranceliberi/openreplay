@@ -83,6 +83,12 @@ export default class IssueReportingStore {
     }
   };
 
+  refreshProjects = async () => {
+    this.projects = [];
+    this.projectsFetched = false;
+    return this.fetchProjects();
+  };
+
   fetchMeta = async (projectId: number) => {
     if (this.metaLoading) return;
     this.metaLoading = true;

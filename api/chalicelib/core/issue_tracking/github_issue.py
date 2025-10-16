@@ -97,4 +97,22 @@ class GithubIntegrationIssue(BaseIntegrationIssue):
 
     def get_projects(self):
         repos = self.__client.get("/user/repos")
+        
+        # Fetch organization repositories
+        try:
+            orgs = self.__client.get("/user/orgs")
+            # Track repo IDs to avoid duplicates
+            repo_ids = {r["id"] for r in repos}
+            
+            for org in orgs:
+                org_repos = self.__client.get(f"/orgs/{org['login']}/repos")
+                # Only add repos that aren't already in the list
+                for org_repo in org_repos:
+                    if org_repo["id"] not in repo_ids:
+                        repos.append(org_repo)
+                        repo_ids.add(org_repo["id"])
+        except Exception as e:
+            # If fetching org repos fails, just continue with user repos
+            pass
+        
         return [formatter.repo(r) for r in repos]
